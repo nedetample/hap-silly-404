@@ -51,7 +51,14 @@ export const config = {
 };
 
 /*
- * ALLOWED_ORIGIN — the only origin the function will serve.
+ * getConfig() reads environment variables at call time, not at module load.
+ *
+ * Why this matters: module-level constants are evaluated once when Node
+ * first imports the file. That makes them impossible to test — you can't
+ * change process.env between tests and re-run the same module. By reading
+ * env vars inside a function, each call sees the current environment.
+ *
+ * allowedOrigin — the only origin the function will serve.
  *
  * Production: must be set explicitly in Netlify dashboard env (SITE_URL).
  * Local dev:  defaults to http://localhost:8888 when running under `ntl dev`,
@@ -63,31 +70,29 @@ export const config = {
  * The two-tier design (env var preferred, dev default fallback) is a
  * common pattern: production stays strict (fail closed if misconfigured)
  * while local dev "just works" with no extra setup.
- */
-const isLocalDev = process.env.NETLIFY_DEV === "true";
-const ALLOWED_ORIGIN = process.env.SITE_URL || (isLocalDev ? "http://localhost:8888" : undefined);
-
-if (!ALLOWED_ORIGIN) {
-  console.error(
-    "SITE_URL is not set in production env. Insult function will return 500. " +
-      "Set SITE_URL in the Netlify dashboard (Site configuration → Environment variables).",
-  );
-}
-
-/*
+ *
  * CORS headers tell the browser which origins may read this response.
  * Setting Access-Control-Allow-Origin to a single value (not "*") means
  * only that one origin can fetch from this function via a browser.
  *
  * The spread operator `...` here conditionally adds the ACAO header only
- * when ALLOWED_ORIGIN is defined. Spreading {} is a no-op, so this is a
+ * when allowedOrigin is defined. Spreading {} is a no-op, so this is a
  * common idiom for "include this property only if X is truthy."
+ *
+ * @returns {{ allowedOrigin: string|undefined, corsHeaders: Record<string,string> }}
  */
-const CORS_HEADERS = {
-  "Content-Type": "application/json",
-  "Cache-Control": "no-store",
-  ...(ALLOWED_ORIGIN ? { "Access-Control-Allow-Origin": ALLOWED_ORIGIN } : {}),
-};
+function getConfig() {
+  const isLocalDev = process.env.NETLIFY_DEV === "true";
+  const allowedOrigin = process.env.SITE_URL || (isLocalDev ? "http://localhost:8888" : undefined);
+
+  const corsHeaders = {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+    ...(allowedOrigin ? { "Access-Control-Allow-Origin": allowedOrigin } : {}),
+  };
+
+  return { allowedOrigin, corsHeaders };
+}
 
 /**
  * Serverless function entry point. Netlify calls this for every request
@@ -97,21 +102,26 @@ const CORS_HEADERS = {
  * @returns {Promise<Response>} JSON response with insult and source.
  */
 export default async function handler(request) {
+  const { allowedOrigin, corsHeaders } = getConfig();
+
   /* Method allowlist: only GET is meaningful here. Returning 405 for
    * everything else (POST, PUT, DELETE, ...) makes intent explicit and
    * stops accidental writes from random clients. */
   if (request.method !== "GET") {
     return new Response(JSON.stringify({ error: "Method not allowed. Use GET." }), {
       status: 405,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
     });
   }
 
   /* Production-misconfig guard: if SITE_URL is missing in production,
    * we'd be accidentally letting any origin call us. Refuse with a 500
-   * rather than silently falling open. The error log at module init
-   * will tell the operator what to fix. */
-  if (!ALLOWED_ORIGIN) {
+   * rather than silently falling open. */
+  if (!allowedOrigin) {
+    console.error(
+      "SITE_URL is not set in production env. Insult function will return 500. " +
+        "Set SITE_URL in the Netlify dashboard (Site configuration → Environment variables).",
+    );
     return new Response(JSON.stringify({ error: "Server misconfigured." }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -129,12 +139,12 @@ export default async function handler(request) {
   const referer = request.headers.get("referer");
 
   const sameOriginRequest =
-    (origin && origin === ALLOWED_ORIGIN) || (referer && referer.startsWith(ALLOWED_ORIGIN));
+    (origin && origin === allowedOrigin) || (referer && referer.startsWith(allowedOrigin));
 
   if (!sameOriginRequest) {
     return new Response(JSON.stringify({ error: "Forbidden." }), {
       status: 403,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
     });
   }
 
@@ -148,7 +158,7 @@ export default async function handler(request) {
   if (!apiKey) {
     return new Response(JSON.stringify({ insult: randomFallback(), source: "fallback" }), {
       status: 200,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
     });
   }
 
@@ -217,7 +227,7 @@ export default async function handler(request) {
       console.warn(`Groq API returned ${response.status}`);
       return new Response(JSON.stringify({ insult: randomFallback(), source: "fallback" }), {
         status: 200,
-        headers: CORS_HEADERS,
+        headers: corsHeaders,
       });
     }
 
@@ -232,20 +242,20 @@ export default async function handler(request) {
       console.warn("Groq response missing expected content shape.");
       return new Response(JSON.stringify({ insult: randomFallback(), source: "fallback" }), {
         status: 200,
-        headers: CORS_HEADERS,
+        headers: corsHeaders,
       });
     }
 
     return new Response(JSON.stringify({ insult, source: "groq" }), {
       status: 200,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
     });
   } catch {
     /* Network-level failure (DNS, TCP, TLS) — fetch itself rejected.
      * Same fallback path as the !response.ok branch above. */
     return new Response(JSON.stringify({ insult: randomFallback(), source: "fallback" }), {
       status: 200,
-      headers: CORS_HEADERS,
+      headers: corsHeaders,
     });
   }
 }
