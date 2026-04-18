@@ -86,11 +86,23 @@ Everything in this part is setup and verification. Do not start the tutorials or
    netlify dev
    ```
 
-5. Visit `http://localhost:8888/404`. You should see the HAP 404 page with a freshly generated roast. The roast should feel unique and witty — not one of the canned fallbacks like "You typed something. The server looked. Nothing."
+5. Visit `http://localhost:8888/404`. You should see the HAP 404 page load with a roast. Now confirm the backend is actually working — roasts look the same whether they're live or canned, so you need to check two things:
 
-   **If you're seeing canned fallbacks:** the function is running but `GROQ_API_KEY` isn't reaching it. Check that the key is set in the Netlify dashboard, that the site is correctly linked (`netlify status`), and that `netlify dev` output shows your environment variables loading. Do not proceed until you see live roasts.
+   **Check 1 — the network response:**
+   Open DevTools (F12) → Network tab → reload the page → click the `insult` request → Preview. You should see:
 
-   **If the page doesn't load at all:** check the `netlify dev` terminal output for errors. Common causes: wrong port (use 8888, not 3999), site not linked, or a function crash. See `docs/tutorials/local-debugging-with-devtools-and-netlify-dev.md`.
+   ```json
+   { "insult": "...", "source": "groq" }
+   ```
+
+   If `source` is `"fallback"` instead of `"groq"`, the Groq API call failed. The function is running but the key isn't reaching it.
+
+   **Check 2 — the netlify dev terminal:**
+   Look at the terminal where `netlify dev` is running. A successful Groq call produces no warning output. If you see `Groq API returned 401` or `Groq API returned 403`, the key is wrong or missing. If you see `SITE_URL is not set`, the environment variable wasn't picked up.
+
+   **Do not proceed past this step until `source` is `"groq"`.** A broken API connection will cause confusing failures throughout the assignment. If you're stuck, run `netlify status` to confirm the site is linked, then check the Netlify dashboard to confirm both `GROQ_API_KEY` and `SITE_URL` are set. See `docs/tutorials/local-debugging-with-devtools-and-netlify-dev.md` for a full debugging walkthrough.
+
+   **If the page doesn't load at all:** wrong port is the most common cause — use 8888, not 3999. Check the `netlify dev` terminal for function crash output.
 
 6. Read `AGENTS.md` before opening Copilot Chat. It is the contract between you and your AI agent. The security rules in it are non-negotiable.
 
