@@ -43,7 +43,7 @@ The "Generate a new roast" button repeats steps 3–5 without a page reload.
 
 This project is hardened beyond the minimum — the `docs/` folder explains how and why each decision was made.
 
-- **Content Security Policy** — external CSS/JS only, Cloudinary in `img-src`, currently in Report-Only mode (observe before enforcing)
+- **Content Security Policy** — enforced; external CSS/JS blocked, Cloudinary in `img-src`, same-origin `connect-src`
 - **CORS** — function allows only its own origin; defaults to `http://localhost:8888` in dev; fails closed (500) in production if `SITE_URL` is missing
 - **Origin/Referer check** — server-side guard that rejects non-browser callers before spending an API call
 - **Rate limiting** — 4 requests per IP+domain per 60-second window via Netlify Functions config
