@@ -96,14 +96,23 @@ http://localhost:8888/404
 
 ---
 
-## Tutorials
+## Tutorials and assignment docs
 
-The `docs/` folder has four student-facing tutorials. They build on each other — reading order matters.
+The `docs/` folder contains a full assignment structure with 11 tutorials, reference cards, and step-by-step instructions. See [`docs/index.md`](docs/index.md) for the complete listing.
 
-1. [CORS is hard and everyone hates it](docs/cors-is-hard-and-everyone-hates-it.md) — why CORS exists, how the browser enforces it, the five errors you'll actually see, and a hands-on exercise using this repo
-2. [Local debugging with DevTools and netlify dev](docs/local-debugging-with-devtools-and-netlify-dev.md) — setup, the two-window dev workflow, reading function logs, and walkthroughs of six real failure modes
-3. [Hardening walkthrough — applying each audit fix](docs/hardening-walkthrough-applying-each-audit-fix.md) — read-along explaining every security change made to this app: CSP, fail-closed CORS, rate limiting, origin checks, and defensive response parsing
-4. [Secretlint — keeping secrets out of git](docs/secretlint-keeping-secrets-out-of-git.md) — why leaked API keys are dangerous, how secretlint blocks accidental commits, and what to do when it fires
+Tutorials build on each other — reading order matters. The short version:
+
+1. [Serverless functions 101](docs/tutorials/serverless-functions-101.md) — what `insult.mjs` is and how Netlify runs it
+2. [ES modules in the browser](docs/tutorials/es-modules-in-the-browser.md) — `type="module"`, module scope, and why `.cjs` exists
+3. [Environment variables and secrets](docs/tutorials/environment-variables-and-secrets.md) — the three-tier config model and what to do if a key leaks
+4. [CORS is hard and everyone hates it](docs/tutorials/cors-is-hard-and-everyone-hates-it.md) — why CORS exists, the five errors you'll see, and a hands-on exercise using this repo
+5. [Local debugging with DevTools and netlify dev](docs/tutorials/local-debugging-with-devtools-and-netlify-dev.md) — the two-window workflow and six real failure mode walkthroughs
+6. [Hardening walkthrough — applying each audit fix](docs/tutorials/hardening-walkthrough-applying-each-audit-fix.md) — every security change made to this app and why
+7. [CSP for front-end features](docs/tutorials/csp-for-front-end-features.md) — what the CSP blocks and what it means for new front-end code
+8. [Graceful degradation — the fallback pattern](docs/tutorials/graceful-degradation-fallback-pattern.md) — the four fallback layers in `insult.mjs`
+9. [Secretlint — keeping secrets out of git](docs/tutorials/secretlint-keeping-secrets-out-of-git.md) — how the pre-commit hook works and what to do when it fires
+10. [OpenSpec — spec-driven development](docs/tutorials/openspec-spec-driven-development.md) — the propose/spec/approve/implement/verify workflow
+11. [TDD with vitest](docs/tutorials/tdd-with-vitest.md) — the red/green cycle and testing the handler with native `Request`/`Response`
 
 ---
 
