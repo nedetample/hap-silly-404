@@ -98,11 +98,12 @@ http://localhost:8888/404
 
 ## Tutorials
 
-The `docs/` folder has three student-facing tutorials. They build on each other — reading order matters.
+The `docs/` folder has four student-facing tutorials. They build on each other — reading order matters.
 
 1. [CORS is hard and everyone hates it](docs/cors-is-hard-and-everyone-hates-it.md) — why CORS exists, how the browser enforces it, the five errors you'll actually see, and a hands-on exercise using this repo
 2. [Local debugging with DevTools and netlify dev](docs/local-debugging-with-devtools-and-netlify-dev.md) — setup, the two-window dev workflow, reading function logs, and walkthroughs of six real failure modes
 3. [Hardening walkthrough — applying each audit fix](docs/hardening-walkthrough-applying-each-audit-fix.md) — read-along explaining every security change made to this app: CSP, fail-closed CORS, rate limiting, origin checks, and defensive response parsing
+4. [Secretlint — keeping secrets out of git](docs/secretlint-keeping-secrets-out-of-git.md) — why leaked API keys are dangerous, how secretlint blocks accidental commits, and what to do when it fires
 
 ---
 
@@ -123,7 +124,9 @@ The `docs/` folder has three student-facing tutorials. They build on each other 
 ├── netlify.toml                 # Redirects, headers, functions config
 ├── eslint.config.js             # ESLint 9 flat config
 ├── .prettierrc                  # Prettier config
-├── package.json                 # Dev tooling only (lint, format scripts)
+├── .secretlintrc.cjs            # Secretlint config (CJS required by config loader)
+├── .husky/                      # Git hooks (pre-commit runs lint-staged)
+├── package.json                 # Dev tooling only (lint, format, check scripts)
 └── .env.example                 # Template for local env vars
 ```
 
@@ -133,7 +136,8 @@ The `docs/` folder has three student-facing tutorials. They build on each other 
 
 Fork the repo and open a pull request. A few things to know:
 
-- Run `npm run lint` and `npm run format:check` before opening a PR
+- Run `npm run check` before opening a PR — runs lint, format check, and secretlint in one shot
+- The pre-commit hook (husky + lint-staged) runs these automatically on staged files at `git commit`
 - All colors use `hsl()` via CSS custom properties prefixed `--hap-*` — don't add hex or rgb values
 - DOM updates use `textContent`, not `innerHTML`
 - To add a HAP pose: upload the image to Cloudinary under `canvas/hap/`, then add an entry to the `HAP_POSES` array in `js/404.mjs` with `id`, `alt`, and `caption`
