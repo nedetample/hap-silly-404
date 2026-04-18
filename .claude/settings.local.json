@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm run:*)",
-      "Bash(npx husky:*)",
-      "Bash(npm info:*)"
-    ]
-  }
-}
