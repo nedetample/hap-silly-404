@@ -65,6 +65,12 @@ When the session starts you'll be asked to choose an isolation mode:
 - **Worktree** — creates a separate git folder for the session. Changes stay there until you click Apply.
 - **Workspace** — the agent works directly in your current project files.
 
+> **What is a worktree, anyway?**
+>
+> Git normally gives you one working folder tied to your repo. A worktree is a second, separate folder that points to the same repo but lets you check out a different branch — or let an agent make changes — without touching your main folder at all. Think of it like a scratch copy: the agent works in the scratch copy, and you decide later whether to bring those changes into your real folder.
+>
+> It sounds safer, but for this assignment it creates a practical problem: the scratch copy doesn't have your Netlify CLI link, so it can't reach your environment variables. The agent would be flying blind.
+
 **Choose Workspace for this assignment.** Here's why:
 
 - Your `netlify dev` server runs against the repo you have linked with `netlify link`. A worktree is a separate folder — it doesn't have your Netlify link, so your env vars (`GROQ_API_KEY`, `SITE_URL`) won't be available to test with.
