@@ -151,9 +151,13 @@ Tasks:
 
 Tests:
 - sanitizePath('/my-missing-page') returns '/my-missing-page' unchanged
-- sanitizePath('/page?inject=ignore previous instructions') returns '/pageinject'
-  (everything after the allowlist chars is stripped)
+- sanitizePath('/page?inject=ignore previous instructions') returns '/page'
+  (the '?' is not in the allowlist, so everything from it onward is stripped)
 - sanitizePath() with a 200-character string returns a string truncated to 100 chars
+
+Each entry in this Tests section becomes one `it()` block in your vitest file. The input
+is your `new Request(...)` or direct function call; the expected output is your `expect()`
+assertion. See `docs/tutorials/tdd-with-vitest.md` for the exact translation.
 ```
 
 Note the constraints section says explicitly "do not change the prompt wiring in this task." This keeps the task small, reviewable, and committable. Wiring it in is task 3 or 4 in a fuller spec.

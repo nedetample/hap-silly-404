@@ -48,6 +48,8 @@ After running `npm install --save-dev vitest`, add these two scripts to `package
 
 `vitest run` runs all tests once and exits — use this for CI and pre-submit checks. `vitest` (no arguments) runs in watch mode and re-runs tests on every file save. Leave watch mode running in a terminal split while you work.
 
+> **Agent caution:** Never ask the Copilot CLI agent to run `npm run test:watch`. Watch mode does not exit — the agent will wait forever for it to finish and your session will hang. For any test run you ask the agent to perform, use `npm test` (`vitest run`) only.
+
 Tests go in a `tests/` directory at the repo root:
 
 ```bash
@@ -144,7 +146,17 @@ describe("insult handler", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveProperty("insult");
-    expect(body).toHaveProperty("source");
+    expect(body.source).toBe("fallback"); // GROQ_API_KEY not set in test env
+  });
+
+  it("returns 500 when SITE_URL is missing in production", async () => {
+    delete process.env.NETLIFY_DEV;
+    delete process.env.SITE_URL;
+    const req = new Request("http://localhost/.netlify/functions/insult", {
+      headers: { origin: "http://localhost:8888" },
+    });
+    const res = await handler(req);
+    expect(res.status).toBe(500);
   });
 });
 ```
@@ -156,7 +168,29 @@ describe("insult handler", () => {
 The request is a GET (the default when no method is specified) with `origin: "https://evil.example"`. `allowedOrigin` is `http://localhost:8888` because `NETLIFY_DEV=true`. The origin check compares them — they don't match — and returns 403. The assertion confirms the origin check works.
 
 **Test 3 — 200 with correct shape:**
-A valid GET from the correct origin. `GROQ_API_KEY` is not set in the test environment, so the handler hits the API key check and returns a fallback insult with `source: "fallback"`. The response is still 200. The assertions confirm the response has the expected shape (`insult` and `source` properties) without caring about the specific values.
+A valid GET from the correct origin. `GROQ_API_KEY` is not set in the test environment, so the handler hits the API key check and returns a fallback insult with `source: "fallback"`. The response is still 200. The assertions confirm the response has the expected shape and that `source` is specifically `"fallback"` — not just that the key exists.
+
+**Test 4 — 500 for missing `SITE_URL` in production:**
+Both `NETLIFY_DEV` and `SITE_URL` are deleted, simulating a misconfigured production deploy. The handler's misconfig guard fires and returns 500. This test verifies the fail-closed behavior is intact — a safety net that should never be removed.
+
+---
+
+## From spec to test: the connection
+
+If you wrote a spec with a Tests section (Track 2), each entry in that section maps directly to one `it()` block:
+
+```
+# In your spec:
+Tests:
+- sanitizePath('/my-missing-page') returns '/my-missing-page' unchanged
+
+# Becomes in your test file:
+it("returns the path unchanged when no disallowed chars are present", () => {
+  expect(sanitizePath('/my-missing-page')).toBe('/my-missing-page');
+});
+```
+
+The spec names what to test. Vitest is where you write the assertion. They are two halves of the same contract.
 
 ---
 
