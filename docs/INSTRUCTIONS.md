@@ -12,15 +12,15 @@ This is a real codebase — a Netlify-deployed 404 page backed by a serverless f
 
 ---
 
-## What you're building
+## What you're building - completing both tracks
 
-Two features, one each for two tracks:
+A minimum of 2 new features, one each for the two tracks:
 
-**Track 1 — front-end feature:** add something to the 404 page (or both pages) that makes the experience more engaging. Examples: dark mode toggle, clipboard share button, roast history for the session. You have full creative latitude on what to build. The security guardrails in `docs/reference/security-guardrails.md` apply regardless.
+**Track 1 — front-end feature:** change or add one or more somethings to the 404 page (or both pages) that makes the experience more engaging. Examples: change of html and/or css changing its content and/or look, dark mode toggle, clipboard share button, roast history for the session. You have full creative latitude on what to build. The security guardrails in `docs/reference/security-guardrails.md` apply regardless.
 
 **Track 2 — back-end security feature:** add a security improvement to `netlify/functions/insult.mjs`. Must include vitest tests. Examples: prompt injection prevention via path sanitization, structured error logging, input validation, response caching with fallback. The feature must not weaken any existing security check.
 
-Both tracks follow the same workflow: propose → spec → implement → verify. You don't write code until a spec is approved.
+Both tracks follow the same workflow: propose → spec → implement → verify. You don't write code until a spec is approved by you for your agent.
 
 ---
 
