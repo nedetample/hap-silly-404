@@ -92,6 +92,11 @@ h2 {
   box-shadow: var(--hap-shadow);
 }
 
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px hsl(0, 0%, 0%, 0.12);
+}
+
 .card h3 {
   font-size: 1.05rem;
   color: var(--hap-brown);
