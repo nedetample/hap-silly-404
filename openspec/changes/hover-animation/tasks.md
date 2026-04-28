@@ -1,7 +1,7 @@
 ## 1. Homepage card hover animation implementation
 
 - [x] 1.1 Update `css/style.css` so homepage cards animate with a subtle lift (`translateY`) and stronger shadow on hover.
-- [ ] 1.2 Add transition properties for card hover-in and hover-out so movement and shadow changes are smooth and reversible.
+- [x] 1.2 Add transition properties for card hover-in and hover-out so movement and shadow changes are smooth and reversible.
 
 ## 2. Verification
 

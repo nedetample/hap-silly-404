@@ -90,6 +90,9 @@ h2 {
   border-radius: var(--hap-radius);
   padding: 1.25rem;
   box-shadow: var(--hap-shadow);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .card:hover {
