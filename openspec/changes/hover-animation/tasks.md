@@ -5,5 +5,5 @@
 
 ## 2. Verification
 
-- [ ] 2.1 Verify on `index.html` that card hover shows subtle lift and deeper shadow and returns to base style on hover-out.
+- [x] 2.1 Verify on `index.html` that card hover shows subtle lift and deeper shadow and returns to base style on hover-out.
 - [ ] 2.2 Run `npm run check` and resolve any issues before marking the change complete.
