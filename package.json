@@ -10,7 +10,7 @@
     "format:check": "prettier --check .",
     "secretlint": "secretlint \"**/*\"",
     "check": "npm run lint && npm run format:check && npm run secretlint",
-    "dev": "NETLIFY_DEV=true netlify dev",
+    "dev": "cross-env NETLIFY_DEV=true netlify dev",
     "prepare": "husky",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@eslint/js": "^9.0.0",
     "@secretlint/secretlint-rule-preset-recommend": "^11.7.1",
+    "cross-env": "^10.1.0",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.0.0",
     "globals": "^16.0.0",
