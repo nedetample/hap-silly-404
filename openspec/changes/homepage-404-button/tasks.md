@@ -5,6 +5,6 @@
 
 ## 2. Styling and verification
 
-- [ ] 2.1 Apply minimal styling updates (if needed) so the new control matches existing landing-page visual conventions.
+- [x] 2.1 Apply minimal styling updates (if needed) so the new control matches existing landing-page visual conventions.
 - [ ] 2.2 Verify the button appears on the homepage and navigation reaches the 404 page when clicked.
 - [ ] 2.3 Run `npm run check` and resolve any issues before considering the change complete.
