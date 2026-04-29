@@ -53,4 +53,27 @@ describe("insult handler path query handling", () => {
     expect(body).not.toHaveProperty("insult");
     expect(body).not.toHaveProperty("source");
   });
+
+  it("returns 403 for cross-origin requests even when path is invalid", async () => {
+    globalThis.process.env.NETLIFY_DEV = "true";
+    delete globalThis.process.env.SITE_URL;
+    delete globalThis.process.env.GROQ_API_KEY;
+
+    const request = new globalThis.Request(
+      "http://localhost/.netlify/functions/insult?path=this-page-does-not-exist",
+      {
+        headers: {
+          origin: "https://evil.example",
+        },
+      },
+    );
+
+    const response = await handler(request);
+    const body = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(body.error).toBe("Forbidden.");
+    expect(body).not.toHaveProperty("insult");
+    expect(body).not.toHaveProperty("source");
+  });
 });

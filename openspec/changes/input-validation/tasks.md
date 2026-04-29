@@ -2,7 +2,7 @@
 
 - [x] 1.1 Create/expand vitest coverage in `tests/` for valid `path` query input that should continue normal response flow.
 - [x] 1.2 Add a failing vitest case for invalid `path` values asserting `400` JSON response and no roast payload.
-- [ ] 1.3 Add a failing vitest case proving cross-origin requests still return `403` even when `path` is invalid.
+- [x] 1.3 Add a failing vitest case proving cross-origin requests still return `403` even when `path` is invalid.
 
 ## 2. Handler implementation and verification
 
