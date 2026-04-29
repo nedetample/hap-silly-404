@@ -148,6 +148,12 @@ export default async function handler(request) {
     });
   }
 
+  const requestUrl = new URL(request.url);
+  const requestedPath = requestUrl.searchParams.get("path");
+  const hasValidRequestedPath = isValidPathQuery(requestedPath);
+  const pathPromptContext =
+    hasValidRequestedPath && requestedPath ? ` Missing path: ${requestedPath}.` : "";
+
   /* Read the API key from environment variables (set in the Netlify
    * dashboard). NEVER hard-code an API key in source. NEVER log its
    * value. If a key ever leaks, rotate it immediately. */
@@ -207,7 +213,7 @@ export default async function handler(request) {
           },
           {
             role: "user",
-            content: `Write a one-liner roast for someone who just hit a 404 page. Angle: ${angle}. Under 25 words. No hashtags, no emojis. Dry wit only.`,
+            content: `Write a one-liner roast for someone who just hit a 404 page.${pathPromptContext} Angle: ${angle}. Under 25 words. No hashtags, no emojis. Dry wit only.`,
           },
         ],
         /* max_tokens caps both the cost of the call AND the size of any
@@ -258,6 +264,24 @@ export default async function handler(request) {
       headers: corsHeaders,
     });
   }
+}
+
+/**
+ * Validate optional `path` query values before using them in prompts.
+ *
+ * Allowed values must:
+ * - Start with "/"
+ * - Be at most 120 characters
+ * - Contain printable URL-path-safe characters only
+ *
+ * @param {string | null} pathQuery - Raw `path` query parameter from request URL.
+ * @returns {boolean}
+ */
+function isValidPathQuery(pathQuery) {
+  if (pathQuery === null) return true;
+  if (!pathQuery.startsWith("/") || pathQuery.length > 120) return false;
+
+  return /^\/[A-Za-z0-9\-._~!$&'()*+,;=:@%/]*$/.test(pathQuery);
 }
 
 /**
