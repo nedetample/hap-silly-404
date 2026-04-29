@@ -151,6 +151,14 @@ export default async function handler(request) {
   const requestUrl = new URL(request.url);
   const requestedPath = requestUrl.searchParams.get("path");
   const hasValidRequestedPath = isValidPathQuery(requestedPath);
+
+  if (requestedPath !== null && !hasValidRequestedPath) {
+    return new Response(JSON.stringify({ error: "Invalid path query." }), {
+      status: 400,
+      headers: corsHeaders,
+    });
+  }
+
   const pathPromptContext =
     hasValidRequestedPath && requestedPath ? ` Missing path: ${requestedPath}.` : "";
 

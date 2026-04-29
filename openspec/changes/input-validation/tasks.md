@@ -7,5 +7,5 @@
 ## 2. Handler implementation and verification
 
 - [x] 2.1 Implement `path` query parsing and validation in `netlify/functions/insult.mjs` after origin/referer check and before API-key/Groq logic.
-- [ ] 2.2 Return `400` JSON for invalid `path` values while preserving existing behavior for valid/missing `path`.
+- [x] 2.2 Return `400` JSON for invalid `path` values while preserving existing behavior for valid/missing `path`.
 - [ ] 2.3 Run `npm run test` and `npm run check`, then resolve any failures before marking the change complete.
